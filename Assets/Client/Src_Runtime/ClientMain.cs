@@ -47,9 +47,12 @@ namespace GameClient {
             }
 
             if (Input.GetKeyUp(KeyCode.Space)) {
-                string message = "Hello111" + Time.time;
-                byte[] data = Encoding.UTF8.GetBytes(message);
+                // string message = "Hello111" + Time.time;
+                // byte[] data = Encoding.UTF8.GetBytes(message);
+                int a = Time.frameCount;
+                byte[] data = BitConverter.GetBytes(a);
                 client.Send(data);
+                Debug.Log("[client]Send: " + a);
             }
         }
 

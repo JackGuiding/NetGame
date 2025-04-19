@@ -32,7 +32,8 @@ namespace GameServer {
             };
 
             server.OnData += (connId, data) => {
-                string message = Encoding.UTF8.GetString(data);
+                // string message = Encoding.UTF8.GetString(data);
+                int message = BitConverter.ToInt32(data);
                 Debug.Log("[server]Data " + connId + ": " + message);
                 // server.Send(connId, data);
             };
