@@ -1,7 +1,10 @@
+using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Telepathy;
+using System.Net.Sockets;
 
 namespace GameServer {
 
@@ -9,24 +12,29 @@ namespace GameServer {
 
         bool isTearDown;
 
-        Server server;
+        Telepathy.Server server;
 
         void Awake() {
-            int port = 12345;
+
+            // 监听: 开启哪个端口
+            int port = 12345; // 1~65535
             int messageSize = 1024;
+
+            // 1. new 
             server = new Server(messageSize);
-            server.Start(port);
+            server.Start(port); // new Socket, 内部有个while
 
             Debug.Log("[server]Listening on port " + port);
 
+            // 3. 事件
             server.OnConnected += (connId, str) => {
-                Debug.Log("[server]Connected " + connId + ": " + str);
-                server.Send(connId, new byte[] { 1, 2, 3, 4, 5 });
+                Debug.Log("[server]Connected " + connId);
             };
 
             server.OnData += (connId, data) => {
-                Debug.Log("[server]Data " + connId + ": " + data.Count + " bytes");
-                server.Send(connId, data);
+                string message = Encoding.UTF8.GetString(data);
+                Debug.Log("[server]Data " + connId + ": " + message);
+                // server.Send(connId, data);
             };
 
             server.OnDisconnected += (connId) => {
@@ -39,6 +47,7 @@ namespace GameServer {
 
         void Update() {
             if (server != null) {
+                // 2. Tick
                 server.Tick(10);
             }
         }
@@ -56,6 +65,7 @@ namespace GameServer {
             isTearDown = true;
 
             if (server != null) {
+                // 4. 因为是子线程，必须Stop
                 server.Stop();
             }
         }

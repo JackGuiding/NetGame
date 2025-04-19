@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,12 +14,15 @@ namespace GameClient {
         bool isTearDown;
 
         void Awake() {
+
+            // 1. 连接谁? IP + Port
             int port = 12345;
             int messageSize = 1024;
-            string ip = "127.0.0.1";
+            string ip = "127.0.0.1"; // 本地IP
             client = new Client(messageSize);
-
             client.Connect(ip, port);
+
+            // 3. 事件
             client.OnConnected += () => {
                 Debug.Log("[client]Connected");
             };
@@ -36,8 +41,15 @@ namespace GameClient {
         }
 
         void Update() {
+            // 2. Tick
             if (client != null) {
                 client.Tick(10);
+            }
+
+            if (Input.GetKeyUp(KeyCode.Space)) {
+                string message = "Hello111" + Time.time;
+                byte[] data = Encoding.UTF8.GetBytes(message);
+                client.Send(data);
             }
         }
 
@@ -53,6 +65,7 @@ namespace GameClient {
             if (isTearDown) return;
             isTearDown = true;
 
+            // 4. Stop / Disconnect
             if (client != null) {
                 client.Disconnect();
             }

@@ -1,3 +1,4 @@
+==== 依赖库 ====
 >> JSONParser
 用途: 数据序列化
 地址: https://github.com/zanders3/json
@@ -9,3 +10,19 @@
 >> ParrelSync
 用途: 单电脑多开Unity, 用于多开Client
 地址: https://github.com/VeriorPies/ParrelSync
+
+==== 教学 ====
+>> Part1: 连接与收发数据
+Server:
+1. new -> Start
+2. Tick
+3. Binding Events
+4. Stop
+
+Client:
+1. new -> Connect
+2. Tick
+3. Binding Events
+4. Stop
+
+>> Part2: 发什么?才能让对方知意图
