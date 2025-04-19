@@ -59,3 +59,7 @@ for 所有 client -> server.Send
 Request(Req): 客户端 发-> 服务端
 Response(Res): 服务端 单发-> 客户端
 Broadcast(Bro): 服务端 广播-> 客户端
+
+==== 扩展 ====
+逻辑(帧)表现(帧)分离
+网络(帧)本地(帧)分离
