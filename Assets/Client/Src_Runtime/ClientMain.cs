@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Telepathy;
+using NetGame_Protocol;
+using TinyJson;
 
 namespace GameClient {
 
@@ -47,12 +49,17 @@ namespace GameClient {
             }
 
             if (Input.GetKeyUp(KeyCode.Space)) {
-                // string message = "Hello111" + Time.time;
-                // byte[] data = Encoding.UTF8.GetBytes(message);
-                int a = Time.frameCount;
-                byte[] data = BitConverter.GetBytes(a);
-                client.Send(data);
-                Debug.Log("[client]Send: " + a);
+                // JSON序列化插件:
+                // 1. Origin
+                LoginMessage msg = new LoginMessage();
+                msg.username = "jack";
+                msg.password = "hello123";
+                // 2. String
+                string str = msg.ToJson();
+                // 3. byte[]
+                byte[] bytes = Encoding.UTF8.GetBytes(str);
+                client.Send(bytes);
+                Debug.Log("[client]Send: " + str);
             }
         }
 

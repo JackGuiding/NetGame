@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Telepathy;
-using System.Net.Sockets;
+using TinyJson;
+using NetGame_Protocol;
 
 namespace GameServer {
 
@@ -32,9 +33,9 @@ namespace GameServer {
             };
 
             server.OnData += (connId, data) => {
-                // string message = Encoding.UTF8.GetString(data);
-                int message = BitConverter.ToInt32(data);
-                Debug.Log("[server]Data " + connId + ": " + message);
+                string str = Encoding.UTF8.GetString(data);
+                LoginMessage msg = str.FromJson<LoginMessage>();
+                Debug.Log("[server]Data " + connId + ": " + msg.username + " " + msg.password);
                 // server.Send(connId, data);
             };
 
