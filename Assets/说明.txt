@@ -1,0 +1,11 @@
+>> JSONParser
+用途: 数据序列化
+地址: https://github.com/zanders3/json
+
+>> Telepathy
+用途: TCP 网络连接
+地址: https://github.com/MirrorNetworking/Telepathy
+
+>> ParrelSync
+用途: 单电脑多开Unity, 用于多开Client
+地址: https://github.com/VeriorPies/ParrelSync
