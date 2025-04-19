@@ -13,6 +13,8 @@ namespace GameClient {
 
         [SerializeField] string username;
 
+        Dictionary<string, RoleEntity> players = new Dictionary<string, RoleEntity>();
+
         Client client;
 
         bool isTearDown;
@@ -37,6 +39,12 @@ namespace GameClient {
                     // SpawnRoleBroMessage
                     var msg = MessageHelper.ReadData<SpawnRoleBroMessage>(data.Array);
                     OnSpawn(msg);
+                } else if (typeID == MessageConst.Move_Bro) {
+                    // MoveBroMessage
+                    var msg = MessageHelper.ReadData<MoveBroMessage>(data.Array);
+                    OnMove(msg);
+                } else {
+                    Debug.LogError("[client]Unknown typeID " + typeID);
                 }
             };
 
@@ -74,6 +82,16 @@ namespace GameClient {
                 byte[] data = MessageHelper.ToData(msg);
                 client.Send(data);
             }
+
+            Vector3 move = Input.GetAxis("Horizontal") * Vector2.right + Input.GetAxis("Vertical") * Vector2.up;
+            bool has = players.TryGetValue(username, out var me);
+            if (has && move != Vector3.zero) {
+                Vector3 pos = me.transform.position + move * Time.deltaTime * 5.0f;
+                MoveReqMessage req = new MoveReqMessage();
+                req.username = username;
+                req.position = new float[2] { pos.x, pos.y };
+                MoveSend(req);
+            }
         }
 
         void OnDestroy() {
@@ -98,11 +116,25 @@ namespace GameClient {
         void OnSpawn(SpawnRoleBroMessage msg) {
             // 1. Spawn
             Debug.Log("[client]Spawn: " + msg.username + " at " + msg.position[0] + ", " + msg.position[1]);
+            RoleEntity role = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<RoleEntity>();
+            role.name = msg.username;
+            role.transform.position = new Vector3(msg.position[0], 0, msg.position[1]);
+            players.TryAdd(msg.username, role);
         }
 
-        void MoveTo(string username, float[] position) {
-            // 2. MoveTo
-            Debug.Log("[client]MoveTo: " + username + " to " + position[0] + ", " + position[1]);
+        void MoveSend(MoveReqMessage req) {
+            // 1. MoveSend
+            byte[] data = MessageHelper.ToData(req);
+            client.Send(data);
+        }
+
+        void OnMove(MoveBroMessage msg) {
+            bool has = players.TryGetValue(msg.username, out var role);
+            if (has) {
+                role.transform.position = new Vector3(msg.position[0], 0, msg.position[1]);
+            } else {
+                Debug.Log("[client]Move: " + msg.username + " not found");
+            }
         }
 
     }

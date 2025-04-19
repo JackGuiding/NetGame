@@ -13,6 +13,8 @@ namespace NetGame_Protocol {
             { typeof(LoginResMessage), MessageConst.Login_Res },
             { typeof(SpawnRoleReqMessage), MessageConst.SpawnRole_Req },
             { typeof(SpawnRoleBroMessage), MessageConst.SpawnRole_Bro },
+            { typeof(MoveReqMessage), MessageConst.Move_Req },
+            { typeof(MoveBroMessage), MessageConst.Move_Bro },
         };
 
         public static int GetTypeID<T>() {

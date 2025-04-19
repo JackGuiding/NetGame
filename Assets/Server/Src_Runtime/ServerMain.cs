@@ -42,10 +42,16 @@ namespace GameServer {
                 if (typeID == MessageConst.Login_Req) {
                     // LoginMessage
                     var req = MessageHelper.ReadData<LoginReqMessage>(data.Array);
-                } else if (typeID == MessageConst.Login_Res) {
-                    // SpawnRoleMessage
+                } else if (typeID == MessageConst.SpawnRole_Req) {
+                    // SpawnRoleReqMessage
                     SpawnRoleReqMessage req = MessageHelper.ReadData<SpawnRoleReqMessage>(data.Array);
                     OnSpawnRole(connId, req);
+                } else if (typeID == MessageConst.Move_Req) {
+                    // MoveReqMessage
+                    MoveReqMessage req = MessageHelper.ReadData<MoveReqMessage>(data.Array);
+                    OnMove(connId, req);
+                } else {
+                    Debug.LogError("[server]Unknown typeID " + typeID);
                 }
             };
 
@@ -106,6 +112,24 @@ namespace GameServer {
                 int clientID = clients[i];
                 // 广播给其他人
                 SpawnRoleBroMessage bro = new SpawnRoleBroMessage();
+                bro.username = req.username;
+                bro.position = req.position;
+
+                byte[] data = MessageHelper.ToData(bro);
+                server.Send(clientID, data);
+            }
+        }
+
+        void OnMove(int connID, MoveReqMessage req) {
+            // 1. 当有一位客户端请求移动
+
+            // 2. 回传给本人
+
+            // 3. 广播给所有人
+            for (int i = 0; i < clients.Count; i++) {
+                int clientID = clients[i];
+                // 广播给其他人
+                MoveBroMessage bro = new MoveBroMessage();
                 bro.username = req.username;
                 bro.position = req.position;
 
