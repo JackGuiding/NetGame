@@ -15,6 +15,8 @@ namespace GameServer {
 
         Telepathy.Server server;
 
+        List<int/*connID*/> clients = new List<int>();
+
         void Awake() {
 
             // 监听: 开启哪个端口
@@ -30,17 +32,21 @@ namespace GameServer {
             // 3. 事件
             server.OnConnected += (connId, str) => {
                 Debug.Log("[server]Connected " + connId);
+                clients.Add(connId);
             };
 
             server.OnData += (connId, data) => {
-                string str = Encoding.UTF8.GetString(data);
-                LoginMessage msg = str.FromJson<LoginMessage>();
-                Debug.Log("[server]Data " + connId + ": " + msg.username + " " + msg.password);
-                // server.Send(connId, data);
+                int typeID = MessageHelper.ReadHeader(data.Array);
+                if (typeID == MessageConst.Login_Req) {
+                    // LoginMessage
+                } else if (typeID == MessageConst.Login_Res) {
+                    // SpawnRoleMessage
+                }
             };
 
             server.OnDisconnected += (connId) => {
                 Debug.Log("[server]Disconnected " + connId);
+                clients.Remove(connId);
             };
 
             Application.runInBackground = true;
@@ -52,6 +58,18 @@ namespace GameServer {
                 // 2. Tick
                 server.Tick(10);
             }
+
+            if (Input.GetKeyUp(KeyCode.Space)) {
+                // 广播
+                for (int i = 0; i < clients.Count; i++) {
+                    int connId = clients[i];
+                    SpawnRoleReqMessage msg = new SpawnRoleReqMessage();
+                    msg.position = new float[] { 1, 2 };
+                    byte[] data = MessageHelper.ToData(msg);
+                    server.Send(connId, data);
+                }
+            }
+
         }
 
         void OnDestroy() {

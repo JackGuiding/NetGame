@@ -51,23 +51,19 @@ namespace GameClient {
             if (Input.GetKeyUp(KeyCode.Space)) {
                 // JSON序列化插件:
                 // 1. Origin
-                LoginMessage msg = new LoginMessage();
+                LoginReqMessage msg = new LoginReqMessage();
                 msg.username = "jack";
                 msg.password = "hello123";
-                // 2. String
-                string str = msg.ToJson();
-                // 3. byte[]
-                byte[] bytes = Encoding.UTF8.GetBytes(str);
-                client.Send(bytes);
-                Debug.Log("[client]Send: " + str);
+                byte[] data = MessageHelper.ToData(msg);
+                client.Send(data);
             }
 
             if (Input.GetKeyUp(KeyCode.R)) {
-                SpawnRoleMessage msg = new SpawnRoleMessage();
+                SpawnRoleReqMessage msg = new SpawnRoleReqMessage();
                 msg.position = new float[2] { 1.0f, 2.0f };
-                string str = msg.ToJson();
-                byte[] bytes = Encoding.UTF8.GetBytes(str);
-                client.Send(bytes);
+
+                byte[] data = MessageHelper.ToData(msg);
+                client.Send(data);
             }
         }
 

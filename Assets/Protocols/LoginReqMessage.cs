@@ -2,7 +2,7 @@ using System;
 
 namespace NetGame_Protocol {
 
-    public struct LoginMessage {
+    public struct LoginReqMessage {
 
         public string username;
         public string password;

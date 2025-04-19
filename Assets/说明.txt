@@ -27,3 +27,11 @@ Client:
 
 >> Part2: 发什么?才能让对方知意图
 把消息增加一个前缀: int messageTypeID
+
+>> Part3: 广播
+for 所有 client -> server.Send
+
+==== 规范 ====
+Request(Req): 客户端 发-> 服务端
+Response(Res): 服务端 单发-> 客户端
+Broadcast(Bro): 服务端 广播-> 客户端
