@@ -27,9 +27,21 @@ Client:
 
 >> Part2: 发什么?才能让对方知意图
 把消息增加一个前缀: int messageTypeID
+发送时数据烘焙:
+    - 原始数据(结构体) -> 序列化(A库) -> byte[]
+    - 原始数据(结构体) -> string -> byte[]
+    - 原始数据(结构体) -> byte[]
+接收时数据烘焙:
+    - byte[] -> 反序列化(一定用A库) -> 原始数据(结构体)
+    - byte[] -> 原始数据(结构体)
 
 >> Part3: 广播
 for 所有 client -> server.Send
+
+>> Part4: 小球
+
+>> DEBUG
+发了什么?: byte[] 字节数
 
 ==== 规范 ====
 Request(Req): 客户端 发-> 服务端

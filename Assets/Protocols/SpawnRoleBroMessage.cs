@@ -2,10 +2,10 @@ using System;
 
 namespace NetGame_Protocol {
 
-    public struct SpawnRoleReqMessage {
+    public struct SpawnRoleBroMessage {
 
         public string username;
-        public float[] position; // 2D坐标
+        public float[] position;
 
     }
 

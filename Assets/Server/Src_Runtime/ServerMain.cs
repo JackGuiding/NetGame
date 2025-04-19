@@ -36,11 +36,18 @@ namespace GameServer {
             };
 
             server.OnData += (connId, data) => {
+                Debug.Log("[server]Data " + connId + " " + data.Count);
                 int typeID = MessageHelper.ReadHeader(data.Array);
                 if (typeID == MessageConst.Login_Req) {
                     // LoginMessage
+                    string str = MessageHelper.ReadData<LoginReqMessage>(data.Array);
+                    Debug.Log("[server]Login_Req " + str);
+                    LoginReqMessage req = JsonUtility.FromJson<LoginReqMessage>(str);
                 } else if (typeID == MessageConst.Login_Res) {
                     // SpawnRoleMessage
+                    string str = MessageHelper.ReadData<SpawnRoleReqMessage>(data.Array);
+                    SpawnRoleReqMessage req = str.FromJson<SpawnRoleReqMessage>();
+                    OnSpawnRole(connId, req);
                 }
             };
 
@@ -87,6 +94,25 @@ namespace GameServer {
             if (server != null) {
                 // 4. 因为是子线程，必须Stop
                 server.Stop();
+            }
+        }
+
+        // ==== Game Logic ====
+        void OnSpawnRole(int connID, SpawnRoleReqMessage req) {
+            // 1. 当有一位客户端请求生成角色
+
+            // 2. 回传给本人
+
+            // 3. 广播给所有人
+            for (int i = 0; i < clients.Count; i++) {
+                int clientID = clients[i];
+                // 广播给其他人
+                SpawnRoleBroMessage bro = new SpawnRoleBroMessage();
+                bro.username = req.username;
+                bro.position = req.position;
+
+                byte[] data = MessageHelper.ToData(bro);
+                server.Send(clientID, data);
             }
         }
 

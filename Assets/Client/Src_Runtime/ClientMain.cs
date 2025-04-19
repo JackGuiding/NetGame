@@ -11,6 +11,8 @@ namespace GameClient {
 
     public class ClientMain : MonoBehaviour {
 
+        [SerializeField] string username;
+
         Client client;
 
         bool isTearDown;
@@ -30,7 +32,13 @@ namespace GameClient {
             };
 
             client.OnData += (data) => {
-                Debug.Log("[client]Data: " + data.Count + " bytes");
+                int typeID = MessageHelper.ReadHeader(data.Array);
+                if (typeID == MessageConst.SpawnRole_Bro) {
+                    // SpawnRoleBroMessage
+                    string str = MessageHelper.ReadData<SpawnRoleBroMessage>(data.Array);
+                    SpawnRoleBroMessage bro = str.FromJson<SpawnRoleBroMessage>();
+                    OnSpawn(bro.username, bro.position);
+                }
             };
 
             client.OnDisconnected += () => {
@@ -52,14 +60,16 @@ namespace GameClient {
                 // JSON序列化插件:
                 // 1. Origin
                 LoginReqMessage msg = new LoginReqMessage();
-                msg.username = "jack";
+                msg.username = username;
                 msg.password = "hello123";
                 byte[] data = MessageHelper.ToData(msg);
+                Debug.Log("[client]Send: " + data.Length);
                 client.Send(data);
             }
 
             if (Input.GetKeyUp(KeyCode.R)) {
                 SpawnRoleReqMessage msg = new SpawnRoleReqMessage();
+                msg.username = username;
                 msg.position = new float[2] { 1.0f, 2.0f };
 
                 byte[] data = MessageHelper.ToData(msg);
@@ -83,6 +93,17 @@ namespace GameClient {
             if (client != null) {
                 client.Disconnect();
             }
+        }
+
+        // ==== Game Logic ====
+        void OnSpawn(string username, float[] position) {
+            // 1. Spawn
+            Debug.Log("[client]Spawn: " + username + " at " + position[0] + ", " + position[1]);
+        }
+
+        void MoveTo(string username, float[] position) {
+            // 2. MoveTo
+            Debug.Log("[client]MoveTo: " + username + " to " + position[0] + ", " + position[1]);
         }
 
     }

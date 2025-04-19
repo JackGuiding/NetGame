@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TinyJson;
+using UnityEngine;
 
 namespace NetGame_Protocol {
 
@@ -11,6 +12,7 @@ namespace NetGame_Protocol {
             { typeof(LoginReqMessage), MessageConst.Login_Req },
             { typeof(LoginResMessage), MessageConst.Login_Res },
             { typeof(SpawnRoleReqMessage), MessageConst.SpawnRole_Req },
+            { typeof(SpawnRoleBroMessage), MessageConst.SpawnRole_Bro },
         };
 
         public static int GetTypeID<T>() {
@@ -23,7 +25,7 @@ namespace NetGame_Protocol {
         }
 
         public static byte[] ToData<T>(T msg) {
-            string str = msg.ToJson();
+            string str = JsonUtility.ToJson(msg);
 
             int typeID = GetTypeID<T>();
 
@@ -38,6 +40,8 @@ namespace NetGame_Protocol {
             // data 写入 dst
             Buffer.BlockCopy(msg_data, 0, msg_dst, msg_header.Length, msg_data.Length);
 
+            UnityEngine.Debug.Log("[MessageHelper]ToData: " + typeID + " " + str);
+
             return msg_dst;
         }
 
@@ -47,6 +51,20 @@ namespace NetGame_Protocol {
             } else {
                 int typeID = BitConverter.ToInt32(data, 0);
                 return typeID;
+            }
+        }
+
+        public static string ReadData<T>(byte[] data) where T : struct {
+            if (data.Length < 4) {
+                return string.Empty;
+            } else {
+                int typeID = ReadHeader(data);
+                if (typeID != GetTypeID<T>()) {
+                    throw new Exception("MessageHelper: Type mismatch");
+                } else {
+                    string str = Encoding.UTF8.GetString(data, 4, data.Length - 4);
+                    return str;
+                }
             }
         }
     }
