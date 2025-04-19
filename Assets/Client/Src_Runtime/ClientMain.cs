@@ -35,9 +35,8 @@ namespace GameClient {
                 int typeID = MessageHelper.ReadHeader(data.Array);
                 if (typeID == MessageConst.SpawnRole_Bro) {
                     // SpawnRoleBroMessage
-                    string str = MessageHelper.ReadData<SpawnRoleBroMessage>(data.Array);
-                    SpawnRoleBroMessage bro = str.FromJson<SpawnRoleBroMessage>();
-                    OnSpawn(bro.username, bro.position);
+                    var msg = MessageHelper.ReadData<SpawnRoleBroMessage>(data.Array);
+                    OnSpawn(msg);
                 }
             };
 
@@ -96,9 +95,9 @@ namespace GameClient {
         }
 
         // ==== Game Logic ====
-        void OnSpawn(string username, float[] position) {
+        void OnSpawn(SpawnRoleBroMessage msg) {
             // 1. Spawn
-            Debug.Log("[client]Spawn: " + username + " at " + position[0] + ", " + position[1]);
+            Debug.Log("[client]Spawn: " + msg.username + " at " + msg.position[0] + ", " + msg.position[1]);
         }
 
         void MoveTo(string username, float[] position) {

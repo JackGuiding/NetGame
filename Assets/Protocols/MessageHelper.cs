@@ -31,14 +31,18 @@ namespace NetGame_Protocol {
 
             byte[] msg_header = BitConverter.GetBytes(typeID);
             byte[] msg_data = System.Text.Encoding.UTF8.GetBytes(str);
+            byte[] msg_length = BitConverter.GetBytes(msg_data.Length);
 
-            byte[] msg_dst = new byte[msg_header.Length + msg_data.Length];
+            byte[] msg_dst = new byte[msg_header.Length + 4 + msg_data.Length];
 
             // header 写入 dst
             Buffer.BlockCopy(msg_header, 0, msg_dst, 0, msg_header.Length);
 
+            // length 写入 dst
+            Buffer.BlockCopy(msg_length, 0, msg_dst, msg_header.Length, msg_length.Length);
+
             // data 写入 dst
-            Buffer.BlockCopy(msg_data, 0, msg_dst, msg_header.Length, msg_data.Length);
+            Buffer.BlockCopy(msg_data, 0, msg_dst, msg_header.Length + msg_length.Length, msg_data.Length);
 
             UnityEngine.Debug.Log("[MessageHelper]ToData: " + typeID + " " + str);
 
@@ -54,16 +58,18 @@ namespace NetGame_Protocol {
             }
         }
 
-        public static string ReadData<T>(byte[] data) where T : struct {
+        public static T ReadData<T>(byte[] data) where T : struct {
             if (data.Length < 4) {
-                return string.Empty;
+                return default;
             } else {
                 int typeID = ReadHeader(data);
                 if (typeID != GetTypeID<T>()) {
                     throw new Exception("MessageHelper: Type mismatch");
                 } else {
-                    string str = Encoding.UTF8.GetString(data, 4, data.Length - 4);
-                    return str;
+                    int length = BitConverter.ToInt32(data, 4);
+                    string str = Encoding.UTF8.GetString(data, 8, length);
+                    T msg = JsonUtility.FromJson<T>(str);
+                    return msg;
                 }
             }
         }

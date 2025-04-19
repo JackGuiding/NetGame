@@ -26,7 +26,10 @@ Client:
 4. Stop
 
 >> Part2: 发什么?才能让对方知意图
-把消息增加一个前缀: int messageTypeID
+1. 增加一个前缀: int messageTypeID
+2. 增加长度: int length
+3. 才解析
+
 发送时数据烘焙:
     - 原始数据(结构体) -> 序列化(A库) -> byte[]
     - 原始数据(结构体) -> string -> byte[]

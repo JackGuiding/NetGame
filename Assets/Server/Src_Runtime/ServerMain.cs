@@ -36,17 +36,15 @@ namespace GameServer {
             };
 
             server.OnData += (connId, data) => {
+                // 注意: 这个data是对象池
                 Debug.Log("[server]Data " + connId + " " + data.Count);
                 int typeID = MessageHelper.ReadHeader(data.Array);
                 if (typeID == MessageConst.Login_Req) {
                     // LoginMessage
-                    string str = MessageHelper.ReadData<LoginReqMessage>(data.Array);
-                    Debug.Log("[server]Login_Req " + str);
-                    LoginReqMessage req = JsonUtility.FromJson<LoginReqMessage>(str);
+                    var req = MessageHelper.ReadData<LoginReqMessage>(data.Array);
                 } else if (typeID == MessageConst.Login_Res) {
                     // SpawnRoleMessage
-                    string str = MessageHelper.ReadData<SpawnRoleReqMessage>(data.Array);
-                    SpawnRoleReqMessage req = str.FromJson<SpawnRoleReqMessage>();
+                    SpawnRoleReqMessage req = MessageHelper.ReadData<SpawnRoleReqMessage>(data.Array);
                     OnSpawnRole(connId, req);
                 }
             };
