@@ -54,9 +54,14 @@ namespace GameClient {
 
             Debug.Log("[client]Connecting to " + ip + ":" + port);
 
+            // 一秒发240条数据给服务端, 这个压力大
+            // 通常情况下, 网络传输采用30fps
+            Application.targetFrameRate = 240;
+
             Application.runInBackground = true;
         }
 
+        float restSec = 0;
         void Update() {
             // 2. Tick
             if (client != null) {
@@ -86,11 +91,16 @@ namespace GameClient {
             Vector3 move = Input.GetAxis("Horizontal") * Vector2.right + Input.GetAxis("Vertical") * Vector2.up;
             bool has = players.TryGetValue(username, out var me);
             if (has && move != Vector3.zero) {
-                Vector3 pos = me.transform.position + move * Time.deltaTime * 5.0f;
-                MoveReqMessage req = new MoveReqMessage();
-                req.username = username;
-                req.position = new float[2] { pos.x, pos.y };
-                MoveSend(req);
+                if (restSec <= 0) {
+                    restSec = 1/30f;
+                    Vector3 pos = me.transform.position + move * Time.deltaTime * 5.0f;
+                    MoveReqMessage req = new MoveReqMessage();
+                    req.username = username;
+                    req.position = new float[2] { pos.x, pos.y };
+                    MoveSend(req);
+                } else {
+                    restSec -= Time.deltaTime;
+                }
             }
         }
 
