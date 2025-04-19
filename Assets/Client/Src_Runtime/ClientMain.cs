@@ -61,6 +61,14 @@ namespace GameClient {
                 client.Send(bytes);
                 Debug.Log("[client]Send: " + str);
             }
+
+            if (Input.GetKeyUp(KeyCode.R)) {
+                SpawnRoleMessage msg = new SpawnRoleMessage();
+                msg.position = new float[2] { 1.0f, 2.0f };
+                string str = msg.ToJson();
+                byte[] bytes = Encoding.UTF8.GetBytes(str);
+                client.Send(bytes);
+            }
         }
 
         void OnDestroy() {

@@ -1,3 +1,16 @@
 {
-	"name": "NetGame.Protocols"
+    "name": "NetGame.Protocols",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6c01621f1b04fd44180a034b70da606c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

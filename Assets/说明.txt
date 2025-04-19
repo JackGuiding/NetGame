@@ -26,3 +26,4 @@ Client:
 4. Stop
 
 >> Part2: 发什么?才能让对方知意图
+把消息增加一个前缀: int messageTypeID
